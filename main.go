@@ -1,21 +1,28 @@
 package main
 
 import (
-	"context"
-	"fmt"
+	"net/http"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+
 )
 
-type MyEvent struct {
-	Name string `json:"name"`
-}
+
 func main() {
 	lambda.Start(HandleRequest)
-
 }
 
 
-func HandleRequest(ctx context.Context, name MyEvent) (string, error) {
-	return fmt.Sprintf("Hiho %s!", name.Name ), nil
+func HandleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+		switch req.HTTPMethod {
+			case "GET":
+				if req.PathParameters["name"] != "" {
+					return events.APIGatewayProxyResponse{Body: "hey ..!" + req.Body, StatusCode: 200}, nil
+				}
+			default:
+				return events.APIGatewayProxyResponse{StatusCode: http.StatusMethodNotAllowed}, nil
+		}
+		return events.APIGatewayProxyResponse{StatusCode: http.StatusMethodNotAllowed}, nil
 }
