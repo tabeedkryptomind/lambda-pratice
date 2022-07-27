@@ -18,11 +18,11 @@ func HandleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyRes
 
 		switch req.HTTPMethod {
 			case "GET":
-				if req.PathParameters["name"] != "" {
-					return events.APIGatewayProxyResponse{Body: "hey ..!" + req.Body, StatusCode: 200}, nil
-				}
+				return events.APIGatewayProxyResponse{Body: "hey ..!", StatusCode: 200}, nil
+			case "POST":
+				name := req.QueryStringParameters["name"]
+				return events.APIGatewayProxyResponse{Body: "Nice to meet you" + name, StatusCode: 200}, nil
 			default:
 				return events.APIGatewayProxyResponse{StatusCode: http.StatusMethodNotAllowed}, nil
 		}
-		return events.APIGatewayProxyResponse{StatusCode: http.StatusMethodNotAllowed}, nil
 }
